@@ -7,15 +7,58 @@ public class Interaction : MonoBehaviour
 {
     public bool openUI = false;
     public int messageNum = 0;
+    public float weight = 0;
+    public float maxWeight = 100;
+    public int selected = 0;
+    public GameObject[] guns;
+    public int gunCount = 0;
+
     // Start is called before the first frame update
     void Start()
     {
         openUI = false;
+        guns[gunCount] = null;
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        int previousWeapon = selected;
+
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        {
+            if(selected >= transform.childCount - 1)
+            {                 
+                selected = 0;
+            }
+            else
+            {
+                selected++;
+            }
+        }
+        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        {
+            if (selected >= transform.childCount - 1)
+            {
+                selected = 0;
+            }
+            else
+            {
+                selected--;
+            }
+        }
+
+        if(previousWeapon != selected)
+        {
+            SelectWeapon();
+        }
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+
+        }
+
         if (Input.GetKeyDown(KeyCode.E))
         {
             messageNum = 0;
@@ -24,10 +67,27 @@ public class Interaction : MonoBehaviour
             if (Physics.Raycast(ray, out hit, 3f))
             {
                 Interactable interactable = hit.collider.GetComponent<Interactable>();
-                interactable.Interact();
-                openUI = true;
+                GunPickUp gun = hit.collider.GetComponent<GunPickUp>();
+                if (gun != null)
+                {
+                    weight = gun.PickUp(weight, maxWeight, transform);
+                    guns[gunCount] = gun.gameObject;
+                    gunCount++;
+                    selected = gunCount - 1;
+                    SelectWeapon();
+                }
+                else if (interactable != null)
+                {
+                    interactable.Interact();
+                    openUI = true;
+                }
+                else
+                {
+                    return;
+                }
             }
         }
+
         if (openUI && Input.GetMouseButtonDown(0))
         {
             Ray ray = new Ray(transform.position, transform.forward);
@@ -53,6 +113,23 @@ public class Interaction : MonoBehaviour
                     messageNum = 0;
                 }
             }
+        }
+    }
+
+    void SelectWeapon()
+    {
+        int i = 0;
+        foreach(Transform gun in transform)
+        {
+            if(i == selected)
+            {
+                gun.gameObject.SetActive(true);
+            }
+            else
+            {
+                gun.gameObject.SetActive(false);
+            }
+            i++;
         }
     }
 }
