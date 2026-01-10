@@ -8,41 +8,36 @@ public class GunPickUp : MonoBehaviour
     public Collider coll;
     public float gunWeight = 0;
     public Gun gun;
-    public GunType gunType;
-    public enum GunType
-    {
-        Pistol,
-        Rifle,
-        Shotgun
-    }
     // Start is called before the first frame update
     void Start()
     {
-
+        gun.enabled = false;
     }
 
     // Update is called once per frame
     void Update()
-    {
-
+    { 
+    
     }
-
     public float PickUp(float weight, float max, Transform weaponHolder)
     {
-        Debug.Log("Gun picked up");
-        coll.enabled = false;
-        transform.SetParent(weaponHolder);
-        transform.localPosition = new Vector3(0, 0, 0);
-        gun.enabled = true;
-        rb.isKinematic = true;
-        weight += gunWeight; 
-
-        if (weight >= max)
+        if (weight + gunWeight > max)
         {
-            weight -= gunWeight;
-            Drop(weight);
+            return weight;
         }
 
+        Debug.Log("Gun picked up");
+
+        coll.enabled = false;
+        rb.isKinematic = true;
+
+        transform.SetParent(weaponHolder);
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+
+        gun.enabled = true;
+
+        weight += gunWeight;
         return weight;
     }
 
