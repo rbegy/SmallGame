@@ -40,19 +40,21 @@ public class GunPickUp : MonoBehaviour
         if (weight >= max)
         {
             weight -= gunWeight;
-            Drop();
-            return weight;
+            Drop(weight);
         }
 
         return weight;
     }
 
-    public void Drop()
+    public float Drop(float weight)
     {
         rb.isKinematic = false;
         gun.enabled = false;
         coll.enabled = true;
         Debug.Log("Gun dropped");
         transform.parent = null;
+        weight -= gunWeight;
+
+        return weight;
     }
 }

@@ -10,25 +10,22 @@ public class Interaction : MonoBehaviour
     public float weight = 0;
     public float maxWeight = 100;
     public int selected = 0;
-    public GameObject[] guns;
-    public int gunCount = 0;
+    public List<GameObject> guns = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
     {
         openUI = false;
-        guns[gunCount] = null;
     }
 
     // Update is called once per frame
     void Update()
-    {
-
+    {   
         int previousWeapon = selected;
 
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
-            if(selected >= transform.childCount - 1)
+            if(selected >= guns.Count - 1)
             {                 
                 selected = 0;
             }
@@ -39,9 +36,9 @@ public class Interaction : MonoBehaviour
         }
         if (Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
-            if (selected >= transform.childCount - 1)
+            if (selected <= 0)
             {
-                selected = 0;
+                selected = guns.Count - 1;
             }
             else
             {
@@ -49,15 +46,36 @@ public class Interaction : MonoBehaviour
             }
         }
 
-        if(previousWeapon != selected)
+        if (previousWeapon != selected)
         {
-            SelectWeapon();
+            SelectWeapon(previousWeapon);
         }
 
-        if (Input.GetKeyDown(KeyCode.G))
-        {
 
+        if(Input.GetKeyDown(KeyCode.G))
+        {
+            if (guns.Count == 0)
+            {
+                return;
+            }
+
+            GameObject weaponToDrop = guns[selected];
+            guns.RemoveAt(selected);
+
+            weaponToDrop.transform.SetParent(null);
+            weaponToDrop.SetActive(true);
+
+            GunPickUp gunPickUp = weaponToDrop.GetComponent<GunPickUp>();
+            weight = gunPickUp.Drop(weight);
+
+            if (selected >= guns.Count)
+            { 
+                selected = guns.Count - 1;
+            }
+    
+            UpdateWeaponVisibility();
         }
+
 
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -71,10 +89,8 @@ public class Interaction : MonoBehaviour
                 if (gun != null)
                 {
                     weight = gun.PickUp(weight, maxWeight, transform);
-                    guns[gunCount] = gun.gameObject;
-                    gunCount++;
-                    selected = gunCount - 1;
-                    SelectWeapon();
+                    gun.gameObject.SetActive(false);
+                    guns.Add(gun.gameObject);
                 }
                 else if (interactable != null)
                 {
@@ -116,20 +132,20 @@ public class Interaction : MonoBehaviour
         }
     }
 
-    void SelectWeapon()
+
+
+    void SelectWeapon(int previousWeapon)
     {
-        int i = 0;
-        foreach(Transform gun in transform)
+        transform.GetChild(previousWeapon).gameObject.SetActive(false);
+        transform.GetChild(selected).gameObject.SetActive(true);
+    }
+
+    void UpdateWeaponVisibility()
+    {
+        for (int i = 0; i < guns.Count; i++)
         {
-            if(i == selected)
-            {
-                gun.gameObject.SetActive(true);
-            }
-            else
-            {
-                gun.gameObject.SetActive(false);
-            }
-            i++;
+            guns[i].SetActive(i == selected);
         }
     }
+
 }
