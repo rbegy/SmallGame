@@ -11,18 +11,23 @@ public class Gun : MonoBehaviour
         Rifle,
         Shotgun
     }
+
+    [Header("Gun Info")]
     public GunType gunType;
     public int damage = 10;
     [SerializeField] private int range = 50;
     public float reloadTime = 3f;
     public float fireRate = 0.5f;
 
+
+    [Header("Ammo")]
     public int ammo = 30;
     public int maxAmmo = 30;
 
-    private bool canShoot = true;
-    private bool reloading = false;
 
+    [Header("Misc")]
+    public bool reloading = false;
+    private bool canShoot = true;
     public TextMeshProUGUI ammoText;
 
     // Start is called before the first frame update
@@ -48,11 +53,23 @@ public class Gun : MonoBehaviour
             ammoText.text = ammo.ToString() + " / " + maxAmmo.ToString();
         }
 
-        if (Input.GetMouseButtonDown(0) && canShoot)
+        if(GunType.Shotgun == gunType || GunType.Pistol == gunType)
         {
-            StartCoroutine(Shoot());
+            if (Input.GetMouseButtonDown(0) && canShoot)
+            {
+                StartCoroutine(Shoot());
+            }
         }
-        if(Input.GetKeyDown(KeyCode.R) || ammo == 0)
+        else if(GunType.Rifle == gunType)
+        {
+            if (Input.GetMouseButton(0) && canShoot)
+            {
+                StartCoroutine(Shoot());
+            }
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.R) || ammo == 0)
         {             
             StartCoroutine(Reload());
         }

@@ -118,6 +118,13 @@ public class Interaction : MonoBehaviour
 
 
             GameObject weaponToDrop = guns[selected];
+            Gun gun = weaponToDrop.GetComponent<Gun>();
+            if (gun.reloading)
+            {
+                Debug.Log("Can't drop it, idiot");
+                return;
+            }
+
             guns.RemoveAt(selected);
 
             weaponToDrop.transform.SetParent(null);
@@ -125,6 +132,7 @@ public class Interaction : MonoBehaviour
 
             GunPickUp gunPickUp = weaponToDrop.GetComponent<GunPickUp>();
             weight = gunPickUp.Drop(weight);
+
             ammoPanel.SetActive(guns.Count > 0);
 
             if (selected >= guns.Count)
