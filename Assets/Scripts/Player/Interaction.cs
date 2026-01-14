@@ -127,7 +127,6 @@ public class Interaction : MonoBehaviour
 
             guns.RemoveAt(selected);
 
-            weaponToDrop.transform.SetParent(null);
             weaponToDrop.SetActive(true);
 
             GunPickUp gunPickUp = weaponToDrop.GetComponent<GunPickUp>();
@@ -141,6 +140,11 @@ public class Interaction : MonoBehaviour
             }
 
             WeaponIsVisible();
+            if (guns.Count == 0)
+            {
+                selected = 0;
+                return;
+            }
             return;
         }
 
