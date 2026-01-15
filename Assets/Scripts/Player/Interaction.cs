@@ -12,17 +12,24 @@ public class Interaction : MonoBehaviour
     public int selected = 0;
     public List<GameObject> guns = new List<GameObject>();
     public GameObject ammoPanel;
+    public Health health;
+    public bool dead = false;
 
     // Start is called before the first frame update
     void Start()
     {
         openUI = false;
         ammoPanel.SetActive(false);
+        dead = false;
     }
 
     // Update is called once per frame
     void Update()
-    {   
+    {
+        if (health.currentHealth == 0)
+        {
+            dead = true;
+        }
 
         int previousWeapon = selected;
         if (Input.GetKeyDown(KeyCode.E))
@@ -108,7 +115,7 @@ public class Interaction : MonoBehaviour
                 }
             }
         }
-        if (Input.GetKeyDown(KeyCode.G))
+        if (Input.GetKeyDown(KeyCode.G) || dead)
         {
             if (guns.Count == 0)
             {

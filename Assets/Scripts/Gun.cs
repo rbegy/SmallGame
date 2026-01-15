@@ -82,7 +82,7 @@ public class Gun : MonoBehaviour
             yield break;
         }
         canShoot = false;
-        Ray ray = new Ray(transform.position, transform.forward);
+        Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, range))
         {
