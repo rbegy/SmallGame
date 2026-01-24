@@ -29,6 +29,7 @@ public class Gun : MonoBehaviour
     public bool reloading = false;
     private bool canShoot = true;
     public TextMeshProUGUI ammoText;
+    public GameObject impactEffect;
 
     // Start is called before the first frame update
     void Start()
@@ -93,6 +94,13 @@ public class Gun : MonoBehaviour
                 target.health -= damage;
             }
 
+            if(hit.rigidbody != null)
+            {
+                hit.rigidbody.AddForce(-hit.normal * 50f);
+            }
+
+            GameObject impact = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
+            Destroy(impact, 2f);
         }
         Debug.Log("Boom Bang Shadabing");
         ammo--;
